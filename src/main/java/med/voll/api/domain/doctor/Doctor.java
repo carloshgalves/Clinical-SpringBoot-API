@@ -1,11 +1,12 @@
-package med.voll.api.doctor;
+package med.voll.api.domain.doctor;
 
 import jakarta.persistence.*;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import med.voll.api.address.Address;
+import med.voll.api.domain.address.Address;
 
 
 @Table(name = "doctors")
@@ -29,7 +30,10 @@ public class Doctor {
     @Embedded
     private Address address;
 
-    public Doctor(RegisteredDoctorData data) {
+    private boolean active;
+
+    public Doctor(RegisteredDoctorDTO data) {
+        this.active = true;
         this.name = data.name();
         this.email = data.email();
         this.medicalLicenseNumber = data.medicalLicenseNumber();
@@ -38,4 +42,19 @@ public class Doctor {
         this.address = new Address(data.address());
     }
 
+    public void updateData(@Valid UpdatedDoctorDTO data) {
+        if (data.name() != null) {
+            this.name = data.name();
+        }
+        if (data.telephone() != null) {
+            this.telephoneNumber = data.telephone();
+        }
+        if (data.addressData() != null) {
+            this.address.updateData(data.addressData());
+        }
+    }
+
+    public void deleteDoctor() {
+        this.active = false;
+    }
 }
