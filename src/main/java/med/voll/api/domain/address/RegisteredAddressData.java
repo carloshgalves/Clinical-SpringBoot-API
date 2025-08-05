@@ -18,6 +18,7 @@ public record RegisteredAddressData(
         String city,
 
         @NotBlank
+        @Pattern(regexp="//d{2}")
         String state,
 
         String number,
