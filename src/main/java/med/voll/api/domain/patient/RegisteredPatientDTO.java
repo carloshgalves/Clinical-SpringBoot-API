@@ -28,12 +28,11 @@ public record RegisteredPatientDTO(
         Integer age,
 
         @Enumerated(EnumType.STRING)
-        @Pattern(regexp = "^[MF]$")
+        @NotNull
         Sex sex,
 
         @NotNull
         @Valid
         RegisteredAddressData address
-
 ) {
 }

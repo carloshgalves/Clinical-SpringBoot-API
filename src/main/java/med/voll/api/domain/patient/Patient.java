@@ -2,14 +2,13 @@
 
     import jakarta.persistence.*;
     import jakarta.validation.Valid;
-    import jakarta.validation.constraints.Email;
-    import jakarta.validation.constraints.NotBlank;
     import jakarta.validation.constraints.NotNull;
     import lombok.AllArgsConstructor;
     import lombok.EqualsAndHashCode;
     import lombok.Getter;
     import lombok.NoArgsConstructor;
     import med.voll.api.domain.address.Address;
+    import org.hibernate.sql.Update;
 
     @Table(name = "patients")
     @Entity(name = "Patient")
@@ -22,24 +21,13 @@
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         private Long id;
-
-        @NotNull
         private String name;
-
-        @NotBlank
-        @Email
         private String email;
-
-        @NotBlank
         private String cpf;
-
-        @NotBlank
         private String telephoneNumber;
-
-        @NotNull
         private Integer age;
 
-        @NotBlank
+        @NotNull
         @Enumerated(EnumType.STRING)
         private Sex sex;
 
@@ -51,9 +39,30 @@
         public Patient(@Valid RegisteredPatientDTO patientDTO) {
             this.active = true;
             this.name = patientDTO.name();
+            this.email = patientDTO.email();
             this.cpf = patientDTO.cpf();
+            this.telephoneNumber = patientDTO.telephoneNumber();
             this.age = patientDTO.age();
             this.sex = patientDTO.sex();
             this.address = new Address(patientDTO.address());
+        }
+
+        public void updateData(@Valid UpdatedPatientDTO updatedPatientDTO) {
+            if (updatedPatientDTO.name() != null) {
+                this.name = updatedPatientDTO.name();
+            }
+            if (updatedPatientDTO.email() != null) {
+                this.email = updatedPatientDTO.email();
+            }
+            if (updatedPatientDTO.telephoneNumber() != null) {
+                this.telephoneNumber = updatedPatientDTO.telephoneNumber();
+            }
+            if (updatedPatientDTO.addressData() != null) {
+                this.address.updateData(updatedPatientDTO.addressData());
+            }
+        }
+
+        public void deletePatient() {
+            this.active = false;
         }
     }

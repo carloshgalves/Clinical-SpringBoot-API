@@ -27,7 +27,7 @@ public class DoctorController {
         var uri = uriBuilder.path("doctors/{id}").buildAndExpand(doctor.getId()).toUri();
 
 
-        return ResponseEntity.created(uri).body(new detailedDoctorData(doctor));
+        return ResponseEntity.created(uri).body(new DetailedDoctorData(doctor));
     }
 
     @GetMapping
@@ -41,7 +41,7 @@ public class DoctorController {
     public ResponseEntity updateDoctor(@RequestBody @Valid UpdatedDoctorDTO data) {
         var doctor = doctorRepository.getReferenceById(data.id());
         doctor.updateData(data);
-        return ResponseEntity.ok(new detailedDoctorData(doctor));
+        return ResponseEntity.ok(new DetailedDoctorData(doctor));
     }
 
     @DeleteMapping("/{id}")
@@ -57,7 +57,7 @@ public class DoctorController {
     @GetMapping("/{id}")
     public ResponseEntity detailDoctorData(@PathVariable Long id) {
         var doctor = doctorRepository.getReferenceById(id);
-        return ResponseEntity.ok(new detailedDoctorData(doctor));
+        return ResponseEntity.ok(new DetailedDoctorData(doctor));
     }
 
 }

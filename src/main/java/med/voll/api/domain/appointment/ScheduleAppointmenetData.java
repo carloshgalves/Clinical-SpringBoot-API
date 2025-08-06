@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDateTime;
 
-public record scheduleAppointmenetData(
+public record ScheduleAppointmenetData(
         @NotNull
         Long idDoctor,
 
