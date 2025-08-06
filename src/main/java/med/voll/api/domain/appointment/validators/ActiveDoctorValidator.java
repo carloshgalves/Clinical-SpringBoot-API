@@ -1,4 +1,4 @@
-package med.voll.api.domain.appointment.validations;
+package med.voll.api.domain.appointment.validators;
 
 import med.voll.api.domain.appointment.ScheduleAppointmentData;
 import med.voll.api.domain.doctor.DoctorRepository;
@@ -7,12 +7,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ActiveDoctorValidator {
+public class ActiveDoctorValidator implements ScheduleAppointmentValidator {
 
     @Autowired
     private DoctorRepository doctorRepository;
 
-    public void validateDoctor(ScheduleAppointmentData data) {
+    @Override
+    public void validate(ScheduleAppointmentData data) {
         //Optional doctor selection
         if (data.idDoctor() == null) {
             return;
@@ -20,8 +21,7 @@ public class ActiveDoctorValidator {
 
         var isDoctorActive = doctorRepository.findActiveById(data.idDoctor());
         if (!isDoctorActive) {
-              throw new ValidationException("Doctor is no longer available for scheduling");
+            throw new ValidationException("Doctor is no longer available for scheduling");
         }
     }
-
 }

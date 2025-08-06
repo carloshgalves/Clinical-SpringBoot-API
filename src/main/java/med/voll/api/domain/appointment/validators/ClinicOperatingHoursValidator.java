@@ -1,4 +1,4 @@
-package med.voll.api.domain.appointment.validations;
+package med.voll.api.domain.appointment.validators;
 
 import med.voll.api.domain.appointment.ScheduleAppointmentData;
 import med.voll.api.infra.exceptions.ValidationException;
@@ -7,9 +7,10 @@ import org.springframework.stereotype.Component;
 import java.time.DayOfWeek;
 
 @Component
-public class ClinicOperatingHoursValidator {
+public class ClinicOperatingHoursValidator implements ScheduleAppointmentValidator{
 
-    public void validateOperatingHours(ScheduleAppointmentData data) {
+    @Override
+    public void validate(ScheduleAppointmentData data) {
         var dateTimeAppointment = data.dateTime();
 
         var sunday = dateTimeAppointment.getDayOfWeek().equals(DayOfWeek.SUNDAY);
@@ -20,5 +21,4 @@ public class ClinicOperatingHoursValidator {
             throw new ValidationException("Appointment outside clinic operating hours");
         }
     }
-
 }
