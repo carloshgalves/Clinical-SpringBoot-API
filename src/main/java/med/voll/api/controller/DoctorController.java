@@ -26,7 +26,6 @@ public class DoctorController {
 
         var uri = uriBuilder.path("doctors/{id}").buildAndExpand(doctor.getId()).toUri();
 
-
         return ResponseEntity.created(uri).body(new DetailedDoctorData(doctor));
     }
 

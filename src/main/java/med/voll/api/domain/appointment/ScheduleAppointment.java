@@ -1,13 +1,11 @@
 package med.voll.api.domain.appointment;
 
 import jakarta.validation.Valid;
-
 import med.voll.api.domain.appointment.validators.ScheduleAppointmentValidator;
 import med.voll.api.domain.doctor.Doctor;
 import med.voll.api.domain.doctor.DoctorRepository;
 import med.voll.api.domain.patient.PatientRepository;
 import med.voll.api.infra.exceptions.ValidationException;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -28,7 +26,7 @@ public class ScheduleAppointment {
     @Autowired
     private List<ScheduleAppointmentValidator> validators;
 
-    public void scheduleAppointment(@Valid ScheduleAppointmentData data) {
+    public DetailedAppointmentData scheduleAppointment(@Valid ScheduleAppointmentData data) {
         if (!patientRepository.existsById(data.idPatient())) {
             throw new ValidationException("The patient ID is invalid or not found in the database.");
         }
@@ -40,10 +38,15 @@ public class ScheduleAppointment {
         validators.forEach(validator -> validator.validate(data));
 
         var patient = patientRepository.getReferenceById(data.idPatient());
-        var doctor = selectDoctor(data);
+        Doctor doctor = selectDoctor(data);
+        if (doctor == null) {
+            throw new ValidationException("There's no available doctor in this date");
+        }
         var appointment = new Appointment(null, patient, doctor, data.dateTime());
 
         appointmentRepository.save(appointment);
+
+        return new DetailedAppointmentData(appointment);
     }
 
     private Doctor selectDoctor(@Valid ScheduleAppointmentData data) {
@@ -57,5 +60,4 @@ public class ScheduleAppointment {
 
         return doctorRepository.selectRandomDoctorOnGivenDate(data.specialty(), data.dateTime());
     }
-
 }

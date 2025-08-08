@@ -10,7 +10,6 @@ public record ScheduleAppointmentData(
         @NotNull
         Long idPatient,
 
-        @NotNull
         Long idDoctor,
 
         @NotNull
