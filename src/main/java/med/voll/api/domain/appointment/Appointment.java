@@ -29,5 +29,6 @@ public class Appointment {
     @JoinColumn(name = "doctor_id")
     private Doctor doctor;
 
+    @Column(name = "appointment_date", nullable = false)
     private LocalDateTime dateTime;
 }

@@ -24,15 +24,17 @@ public class SecurityFilter extends OncePerRequestFilter {
     private UserRepository userRepository;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
-            throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         var tokenJWT = getToken(request);
-        if (tokenJWT != null) {
-            var subject = tokenService.getSubject(tokenJWT);
-            var user = userRepository.findByLogin(subject);
-            var authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
 
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+        if (tokenJWT != null) {
+            var subject = tokenService.validateToken(tokenJWT);
+            var user = userRepository.findByLogin(subject);
+
+            if (user != null) {
+                var authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            }
         }
 
         filterChain.doFilter(request, response);
@@ -40,11 +42,7 @@ public class SecurityFilter extends OncePerRequestFilter {
 
     private String getToken(HttpServletRequest request) {
         var authorizationHeader = request.getHeader("Authorization");
-        if (authorizationHeader != null) {
-            return authorizationHeader.replace("Bearer ", "");
-        }
-
-        return null;
+        if (authorizationHeader == null) return null;
+        return authorizationHeader.replace("Bearer ", "");
     }
-
 }
